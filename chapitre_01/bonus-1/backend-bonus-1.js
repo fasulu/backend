@@ -28,7 +28,7 @@ function getcountries() {
         return element.name;
       });
 
-      console.log(countryName.join("-"));
+      console.log(countryName.join(", "));
 
     });
 }

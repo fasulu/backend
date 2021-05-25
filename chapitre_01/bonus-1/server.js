@@ -8,7 +8,7 @@ var port = 8000;
 
 var responseAPICountries = [
   {
-    "name": "Afghanistan",
+    "name": "Afghanistani",
     "topLevelDomain": [
       ".af"
     ],

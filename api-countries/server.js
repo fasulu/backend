@@ -1,6 +1,9 @@
 var express = require('express');
 var app = express();
 
+var cors = require('cors');
+app.use(cors());
+
 var port = 8000;
 
 app.get('/countries', function (req, res) {
