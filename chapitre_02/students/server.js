@@ -1,14 +1,17 @@
 const express = require("express")
 const cors = require("cors")
 
-const { students } = require('./students')
+// const { students } = require('./students')
+
 
 const app = express()
-
-app.use(express.json())
 app.use(cors())
+app.use(express.json())
 
-const port = 4000
+
+const port = 8000
+
+const students = []
 
 app.get("/students", (req, res) => {
 
@@ -18,12 +21,20 @@ app.get("/students", (req, res) => {
 
 app.post("/students", (req, res) => {
 const newStudent = req.body
+
 students.push(newStudent)
+
     res.json({
-        message: "students added"
+        message: "students added",
+        newStudent
     })
 })
 
+app.get("*", (req, res) => {
+    res.json({
+        message: "The route does not exist"
+    })
+})
 // app.get("/movie/:id", (req, res) => {
 //     const id = parseInt(req.params.id)
 //     const movieFound = popularMovies.find(elem => {
