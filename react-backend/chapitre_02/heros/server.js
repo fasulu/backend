@@ -39,10 +39,10 @@ const superHeros = [
 // which shows the information about the connection when page refresh
 // the next (middleware) will take to the next app.get
 // if user not authorized gives error msg in webpage
-app.use("/",(err, req, res, next) => {
+app.use("/", (err, req, res, next) => {
     console.log("new conn request", req.hostname, req.path, req.method);
     if (authorizeUser) {
-        next()    
+        next()
     } else {
         res.send('<h1>Un authorised to visit the page</h1>')
     }
@@ -65,10 +65,10 @@ app.get("/heros/:name", (req, res) => {
     if (heroFound) {
         console.log(heroFound)
         res.json(heroFound)     // response all details of hero found as json value 
-    }else{
+    } else {
         // res.send('<h1>hero not found</h1>')
         console.log("Hero not found")
-    }    
+    }
 })
 
 // function changeMiniscule(name, next){
@@ -89,7 +89,7 @@ app.get("/heros/:name/power", (req, res) => {
     console.log(name)
 
     // changeMiniscule(name);
-    
+
     const heroFound = superHeros.find(elem => {
         console.log(elem.name)
         return elem.name.toLowerCase() === name.toLowerCase()
@@ -98,7 +98,7 @@ app.get("/heros/:name/power", (req, res) => {
         console.log(heroFound)
         res.json(heroFound.power)
 
-    }else{
+    } else {
 
         console.log("Hero power not found")
 
@@ -107,17 +107,75 @@ app.get("/heros/:name/power", (req, res) => {
     res.json("text")
 })
 
-// following app.post send info to add into server dbase,
-// once added gives info that it is added
-app.post("/heros", (req, res) => {
+//******************* */
+
+// // following app.post send info to add into server dbase,
+// // once added gives info that it is added
+// app.post("/heros", (req, res) => {
+//     const newHero = req.body    // take body of the value save in newHero constant
+//     superHeros.push(newHero)    // add the newHero value in the superHeros list
+//     res.json({
+//         message: "Hero added",  // show that the hero added
+//         newHero
+//     })
+
+// })
+
+app.post("/heros", (req, res, next) => {
     const newHero = req.body    // take body of the value save in newHero constant
-    superHeros.push(newHero)    // add the newHero value in the superHeros list
-    res.json({
-        message: "Hero added",  // show that the hero added
-        newHero
+    console.log("newHero is", newHero)
+    //************* */
+    // check is the superhero already in the database
+
+    const heroFound = superHeros.find(elem => {
+        console.log(elem.name)
+
+        return elem.name.toLowerCase() === newHero.name.toLowerCase()
+
     })
 
+    // console.log("hero found in db is ",heroFound.name)
+    // console.log("user entered hero is ",newHero.name)
+    // next()
+
+    if (heroFound.name.toLocaleLowerCase() === newHero.name.toLowerCase()) {
+        res.json({
+            message: `Hero already found in the list ${heroFound.name}, ${newHero.name}`
+        })
+    } else {
+        res.json({
+            message: `Hero already found in the list ${heroFound.name}, ${newHero.name}`
+        })
+
+        // superHeros.push(newHero)
+        // res.json({
+        //     message: "Hero added",  // show that the hero added
+        //     newHero
+        // })
+    }
+
+
+    // if (heroFound) {
+    //     console.log(heroFound, "Already found, not added")
+    // } else {
+    // //**************** */
+
+    // superHeros.push(newHero)    // add the newHero value in the superHeros list
+    // res.json({
+    //     message: "Hero added",  // show that the hero added
+    //     newHero
+    // })
+    // }
 })
+
+
+
+
+
+//******************* */
+
+
+
 
 // following app.use is the middleware which reach if above app.get fails
 // the following code will reach and display 404 error on the webpage if above routes fail to work
