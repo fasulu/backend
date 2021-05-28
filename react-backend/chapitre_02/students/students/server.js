@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.json())
 
 
-const port = 8000
+const port = 4000
 
 const students = []
 
