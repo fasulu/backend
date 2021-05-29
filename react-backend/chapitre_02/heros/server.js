@@ -109,7 +109,7 @@ app.get("/heros/:name/power", (req, res) => {
 
 //******************* */
 
-// // following app.post send info to add into server dbase,
+// // following app.post send data to add into server dbase without verification,
 // // once added gives info that it is added
 // app.post("/heros", (req, res) => {
 //     const newHero = req.body    // take body of the value save in newHero constant
@@ -121,39 +121,38 @@ app.get("/heros/:name/power", (req, res) => {
 
 // })
 
+// the following code verifies before saving the new hero in the database
 app.post("/heros", (req, res, next) => {
     const newHero = req.body    // take body of the value save in newHero constant
     console.log("newHero is", newHero)
     //************* */
     // check is the superhero already in the database
-
+    // if found, stores the hero object in heroFound else stores 'undefined' in the const
     const heroFound = superHeros.find(elem => {
         console.log(elem.name)
 
         return elem.name.toLowerCase() === newHero.name.toLowerCase()
 
     })
+    console.log("hero found in db is ",typeof heroFound)
+    console.log("user entered hero is ",typeof newHero)
 
-    // console.log("hero found in db is ",heroFound.name)
-    // console.log("user entered hero is ",newHero.name)
-    // next()
-
-    if (heroFound.name.toLocaleLowerCase() === newHero.name.toLowerCase()) {
+    if(heroFound === undefined) {   // verify if the heroFound has an object or not (if not it stores as 'undefined' in the const heroFound)
+        
+        console.log("hero not found in the list")
+        
+        superHeros.push(newHero)    // add the newHero value in the superHeros list
+        
         res.json({
-            message: `Hero already found in the list ${heroFound.name}, ${newHero.name}`
+            message: "Hero added",  // show that the hero added
+            newHero
         })
+
     } else {
-        res.json({
-            message: `Hero already found in the list ${heroFound.name}, ${newHero.name}`
-        })
-
-        // superHeros.push(newHero)
-        // res.json({
-        //     message: "Hero added",  // show that the hero added
-        //     newHero
-        // })
+        console.log("hero found in the list")
     }
 
+    next()
 
     // if (heroFound) {
     //     console.log(heroFound, "Already found, not added")
