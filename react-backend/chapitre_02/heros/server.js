@@ -1,6 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 
+// const fs = require('fs');
+// const filePath = 'errorLog.txt'
+
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -46,15 +49,34 @@ app.use(function(req, res, next){
     console.log("Path", req.path);
     console.log("Request method", req.method);
     if (authorizeUser) {
-        next()
-    } else {
+        console.log("Authorized User")
+        next()                          // goes to next funtion
+    } else {        
         res.send('<h1>Un authorised to visit the page</h1>')
+        next()                          // goes to next funtion
     }
 })
 
+
+//****** a type of middleware  */
+
+const call = (res, req, next) => {
+    console.log("app.get() called me")
+    next()                           // goes to next funtion
+}
+
+//****** */
+
+
+
 // following app.get request's info from server about heros
-app.get("/heros", (req, res) => {
-    res.json(superHeros)
+app.get("/heros", call, (req, res, next) => {        // this is a example how to call a middleware("call") for a specific job
+    try {
+        res.json(superHeros)
+
+    } catch {
+        console.log(err)
+    }
 })
 
 // following app.get pick hero name as params and search using finds in the list
@@ -176,11 +198,12 @@ app.post("/heros", (req, res, next) => {
 //     next()
 // })
 
-// app.get("*", (req, res) => {
-//     res.json({
-//         message: "This route does not exist"
-//     })
-// })
+// the following code executes any request other than mentioned above
+app.get("*", (req, res) => {
+    res.json({
+        message: "This route does not exist"
+    })
+})
 
 // app.use(errHandler)
 
