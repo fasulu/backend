@@ -39,8 +39,12 @@ const superHeros = [
 // which shows the information about the connection when page refresh
 // the next (middleware) will take to the next app.get
 // if user not authorized gives error msg in webpage
-app.use("/", (err, req, res, next) => {
-    console.log("new conn request", req.hostname, req.path, req.method);
+
+// app.use("/", (err, req, res, next) => {
+app.use(function(req, res, next){
+    console.log("new conn request", req.hostname);
+    console.log("Path", req.path);
+    console.log("Request method", req.method);
     if (authorizeUser) {
         next()
     } else {
@@ -145,7 +149,7 @@ app.post("/heros", (req, res, next) => {
         
         res.json({
             message: "Hero added",  // show that the hero added
-            newHero
+            newHero                 // display new hero details
         })
 
     } else {
@@ -154,17 +158,6 @@ app.post("/heros", (req, res, next) => {
 
     next()
 
-    // if (heroFound) {
-    //     console.log(heroFound, "Already found, not added")
-    // } else {
-    // //**************** */
-
-    // superHeros.push(newHero)    // add the newHero value in the superHeros list
-    // res.json({
-    //     message: "Hero added",  // show that the hero added
-    //     newHero
-    // })
-    // }
 })
 
 
