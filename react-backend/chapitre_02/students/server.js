@@ -11,7 +11,16 @@ app.use(express.json())
 
 const port = 4000
 
-const students = []
+// const students = []
+
+const students = [
+    {
+        name: "Fas"
+    },
+    {
+        name: "ray"
+    }
+]
 
 app.get("/students", (req, res) => {
 
