@@ -1,7 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 
-// const { students } = require('./students')
+const { students } = require('./students')
 
 
 const app = express()
@@ -9,18 +9,18 @@ app.use(cors())
 app.use(express.json())
 
 
-const port = 4000
+const port = 4001
 
 // const students = []
 
-const students = [
-    {
-        name: "Fas"
-    },
-    {
-        name: "ray"
-    }
-]
+// const students = [
+//     {
+//         name: "Fas"
+//     },
+//     {
+//         name: "bee"
+//     }
+// ]
 
 app.get("/students", (req, res) => {
 
