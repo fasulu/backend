@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 
+// import { superHeros } from 'dataHeros.mjs'
+
 // const fs = require('fs');
 // const filePath = 'errorLog.txt'
 
@@ -52,11 +54,10 @@ app.use(function(req, res, next){
         console.log("Authorized User")
         next()                          // goes to next funtion
     } else {        
-        res.send('<h1>Un authorised to visit the page</h1>')
+        res.send('<h1>Un authorised to visit the page</h1>')     // wll appear error message direct on webpage
         next()                          // goes to next funtion
     }
 })
-
 
 //****** a type of middleware  */
 
@@ -67,7 +68,19 @@ const call = (res, req, next) => {
 
 //****** */
 
-
+const transformName = (req, res, next) => {       // middleware to change into lower case
+    
+    if (req.body.name === undefined){
+        res.json({
+            errorMessage: "Required data missing"
+        })
+    } else {
+        req.body.name = req.body.name.toLowerCase()   
+        next()     
+    }
+    
+}
+//******************* */
 
 // following app.get request's info from server about heros
 app.get("/heros", call, (req, res, next) => {        // this is a example how to call a middleware("call") for a specific job
@@ -81,7 +94,7 @@ app.get("/heros", call, (req, res, next) => {        // this is a example how to
 
 // following app.get pick hero name as params and search using finds in the list
 // of superHeros, and shows error is not found
-app.get("/heros/:name", (req, res) => {
+app.get("/heros/:name", transformName, (req, res) => {
     const name = req.params.name            // take the params value from the address bar stores in name constant
     console.log(name)
     const heroFound = superHeros.find(elem => {         // search using find syntax
@@ -97,11 +110,63 @@ app.get("/heros/:name", (req, res) => {
     }
 })
 
+//***************** */
+
+// Delete a hero from the list
+// app.delete('/', (req, res) => {
+//     res.send("DELETE Request Called")
+//   })
+
+// app.delete('/heros/:name', transformName, (req,res) => {
+app.delete('/heros/:name', (req,res) => {
+
+    console.log("Im params name in app.delete(name)", req.params.name)
+
+    for(i=0; i<=superHeros.length-1;i++) {
+
+        console.log(" delete superheros",superHeros[i])
+
+        if(superHeros[i].name.toLowerCase() === req.params.name.toLowerCase()){
+
+            console.log("hero found", superHeros[i].name.toLowerCase(), req.params.name.toLowerCase())
+
+            res.json({               
+                
+                message:"Deleted"
+            })
+        }
+    }
+})
+
+app.delete('/heros/:name/power/:power', (req,res) => {
+
+    console.log("Im params name in app.delete(name)", req.params.name)
+    console.log("Im params name in app.delete(power)", req.params.power)
+
+    for(i=0; i<=superHeros.length-1;i++) {
+
+        console.log("delete power superheros",superHeros[i])
+
+        if(superHeros[i].name.toLowerCase() === req.params.name.toLowerCase()){
+
+            console.log("hero found", superHeros[i].name.toLowerCase(), req.params.name.toLowerCase())
+
+            res.json({               
+                
+                message:"Deleted"
+            })
+        }
+    }
+})
+
+
+//******************* */
+
 // function changeMiniscule(name, next){
 //     const heroFound = superHeros.find(elem => {
 //         console.log(elem.name)
 //         if (elem.name.toLowerCase() === name.toLowerCase()){
-//             next(heroFound)
+//             next(heroFound)      // passing result in this way can make data crush or lost
 //         }
 //     })
 // }
@@ -183,13 +248,7 @@ app.post("/heros", (req, res, next) => {
 })
 
 
-
-
-
 //******************* */
-
-
-
 
 // following app.use is the middleware which reach if above app.get fails
 // the following code will reach and display 404 error on the webpage if above routes fail to work
