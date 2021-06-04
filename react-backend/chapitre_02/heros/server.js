@@ -70,7 +70,8 @@ const call = (res, req, next) => {
 
 const transformName = (req, res, next) => {       // middleware to change into lower case
     
-    if (req.body.name === undefined){
+    if (req.body === undefined){
+        console.log("Im in transformName", req.body.name)
         res.json({
             errorMessage: "Required data missing"
         })
@@ -94,7 +95,8 @@ app.get("/heros", call, (req, res, next) => {        // this is a example how to
 
 // following app.get pick hero name as params and search using finds in the list
 // of superHeros, and shows error is not found
-app.get("/heros/:name", transformName, (req, res) => {
+// app.get("/heros/:name", transformName, (req, res) => {
+app.get("/heros/:name", (req, res) => {
     const name = req.params.name            // take the params value from the address bar stores in name constant
     console.log(name)
     const heroFound = superHeros.find(elem => {         // search using find syntax
@@ -105,8 +107,9 @@ app.get("/heros/:name", transformName, (req, res) => {
         console.log(heroFound)
         res.json(heroFound)     // response all details of hero found as json value 
     } else {
-        // res.send('<h1>hero not found</h1>')
+        
         console.log("Hero not found")
+        res.send('<h1>hero not found</h1>')
     }
 })
 

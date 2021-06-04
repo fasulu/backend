@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.json())
 
 
-const port = 4001
+const port = 4000
 
 // const students = []
 
@@ -31,6 +31,7 @@ app.get("/students", (req, res) => {
 app.post("/students", (req, res) => {
 const newStudent = req.body
 
+console.log(newStudent)
 students.push(newStudent)
 
     res.json({
