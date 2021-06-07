@@ -43,19 +43,19 @@ const Car = mongoose.model("car", carSchema)
 // db.cars.find({ _id: ObjectId("60be2dda8320b27ae5cabc2e")})
 // etape 4: -2
 
-// const idToFind = "60be39d65b110c867d7f5f58"
-// Car.findById(idToFind, (err, resp) => {
-//     try {
-//         if (err) {
-//             console.log(err)
-//         } else {
-//             console.log("Id data is:-", resp)
-//             console.log("Car make and model :-", resp.marque, resp.model)
-//         }
-//     } catch (error) {
-//         console.log("Error while getting car details")
-//     }
-// })
+const idToFind = "60be39d65b110c867d7f5f58"
+Car.findById(idToFind, (err, resp) => {
+    try {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log("Id data is:-", resp)
+            console.log("Car make and model :-", resp.marque, resp.model)
+        }
+    } catch (error) {
+        console.log("Error while getting car details")
+    }
+})
 
 const carModel = "Espace";
 
