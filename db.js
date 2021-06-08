@@ -16,6 +16,21 @@ const carSchema = mongoose.Schema({
 })
 
 const Car = mongoose.model("car", carSchema)
+const myCar = async () => {
+    try {
+        const myCar = new Car({
+            marque: "Renault",
+            model: "R5",
+            year: 1991
+        })
+        const savedResult = await myCar.save()
+        console.log("Data saved", savedResult);
+    } catch (error) {
+        console.log("Error while saving data")
+    }
+}
+myCar();
+
 // const myCar = new Car({
 //     marque: "Renault",
 //     model: "Espace",
@@ -55,74 +70,76 @@ const Car = mongoose.model("car", carSchema)
 // db.cars.find({ _id: ObjectId("60be2dda8320b27ae5cabc2e")})
 // etape 4: -2
 
-// const idToFind = "60be39d65b110c867d7f5f58"
-//     try {
-//          Car.findById(idToFind, (err, resp) => {
+const idToFind = "60be39d65b110c867d7f5f58"
+// try {
+//     Car.findById(idToFind, (err, resp) => {
 //         if (err) {
 //             console.log(err)
 //         } else {
 //             console.log("Id data is:-", resp)
 //             console.log("Car make and model :-", resp.marque, resp.model)
 //         }
-//     } catch (error) {
-//         console.log("Error while getting car details")
-//     }
-// })
+
+//     })
+// } catch (error) {
+//     console.log("Error while getting car details")
+// }
 
 // etape 5:
 
 const carModel = "Espace";
 
-//     try {
-//          Car.findOneAndUpdate(carModel, { year: 2000 }, (err, resp) => {
-//         if(err) {
-//             console.log("Something went wrong",err)
+// try {
+//     Car.findOneAndUpdate(carModel, { year: 2000 }, (err, resp) => {
+//         if (err) {
+//             console.log("Something went wrong", err)
 //         }
-//         else{
+//         else {
 //             console.log("Data changed successfully", resp)
 //         }
-//     }catch(error) {
-//         console.log("Something went wrong")
-//     }
-// })
+//     })
+// } catch (error) {
+//     console.log("Something went wrong")
+// }
 
 // etape 6:
 const carDelete = "Renault"
 
-//     try{
-//          Car.findOneAndDelete(carDelete, (err,resp) => {     // to delete first find result
-//         if(err) {
+// try {
+//     Car.findOneAndDelete(carDelete, (err, resp) => {     // to delete first find result
+//         if (err) {
 //             console.log("Error while deleting record", carDelete)
-//         }else{
+//         } else {
 //             console.log(`${carDelete}, deleted successfully`)
 //         }
-//     }catch(error) {
-//         console.log("Error while deleting record", carDelete)
-//     }
-// })
+//     })
+// } catch (error) {
+//     console.log("Error while deleting record", carDelete)
+// }
 
-//     try{
-//          Car.deleteMany({marque: carDelete}, (err,resp) => {     // to delete all marque given in carDelete
-//         if(err) {
+// try {
+//     Car.deleteMany({ marque: carDelete }, (err, resp) => {     // to delete all marque given in carDelete
+//         if (err) {
 //             console.log("Error while deleting record", carDelete)
-//         }else{
+//         } else {
 //             console.log(`${carDelete}, deleted successfully`)
 //         }
-//     }catch(error) {
-//         console.log("Error while deleting record", carDelete)
-//     }
-// })
+
+//     })
+// } catch (error) {
+//     console.log("Error while deleting record", carDelete)
+// }
 
 // etape Bonus
 
-try {
-    Car.insertMany([
+// try {
+//     Car.insertMany([
 
-        { marque: "Aston Martin", model: "D89", year: 2010 },
-        { marque: "Range Rover", model: "Discovery Sport", year: 2017 }
+//         { marque: "Aston Martin", model: "D89", year: 2010 },
+//         { marque: "Range Rover", model: "Discovery Sport", year: 2017 }
 
-    ]).then(console.log("Cars inserted successfully"))
+//     ]).then(console.log("Cars inserted successfully"))
 
-} catch (error) {
-    console.log("Something went wrong while inserting record", err)
-}
+// } catch (error) {
+//     console.log("Something went wrong while inserting record", err)
+// }
