@@ -101,7 +101,7 @@ Car.findOneAndDelete(carDelete, (err,resp) => {     // to delete first find resu
     }
 })
 
-Car.deleteMany(carDelete, (err,resp) => {
+Car.deleteMany({marque: carDelete}, (err,resp) => {     // to delete all marque given in carDelete
     try{
         if(err) {
             console.log("Error while deleting record", carDelete)
@@ -112,3 +112,5 @@ Car.deleteMany(carDelete, (err,resp) => {
         console.log("Error while deleting record", carDelete)
     }
 })
+
+// etape Bonus
