@@ -56,8 +56,8 @@ const Car = mongoose.model("car", carSchema)
 // etape 4: -2
 
 // const idToFind = "60be39d65b110c867d7f5f58"
-// Car.findById(idToFind, (err, resp) => {
 //     try {
+//          Car.findById(idToFind, (err, resp) => {
 //         if (err) {
 //             console.log(err)
 //         } else {
@@ -73,8 +73,8 @@ const Car = mongoose.model("car", carSchema)
 
 const carModel = "Espace";
 
-// Car.findOneAndUpdate(carModel, { year: 2000 }, (err, resp) => {
 //     try {
+//          Car.findOneAndUpdate(carModel, { year: 2000 }, (err, resp) => {
 //         if(err) {
 //             console.log("Something went wrong",err)
 //         }
@@ -89,8 +89,8 @@ const carModel = "Espace";
 // etape 6:
 const carDelete = "Renault"
 
-// Car.findOneAndDelete(carDelete, (err,resp) => {     // to delete first find result
 //     try{
+//          Car.findOneAndDelete(carDelete, (err,resp) => {     // to delete first find result
 //         if(err) {
 //             console.log("Error while deleting record", carDelete)
 //         }else{
@@ -101,8 +101,8 @@ const carDelete = "Renault"
 //     }
 // })
 
-// Car.deleteMany({marque: carDelete}, (err,resp) => {     // to delete all marque given in carDelete
 //     try{
+//          Car.deleteMany({marque: carDelete}, (err,resp) => {     // to delete all marque given in carDelete
 //         if(err) {
 //             console.log("Error while deleting record", carDelete)
 //         }else{
@@ -116,13 +116,13 @@ const carDelete = "Renault"
 // etape Bonus
 
 try {
-   Car.insertMany([
+    Car.insertMany([
 
         { marque: "Aston Martin", model: "D89", year: 2010 },
         { marque: "Range Rover", model: "Discovery Sport", year: 2017 }
-        
+
     ]).then(console.log("Cars inserted successfully"))
-    
-} catch(error) {
+
+} catch (error) {
     console.log("Something went wrong while inserting record", err)
 }
