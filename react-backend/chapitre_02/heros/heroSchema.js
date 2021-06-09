@@ -11,6 +11,6 @@ const heroSchema = new Schema({
     created: { type: Date, default: Date.now() }
 });
 
-const Hero = mongoose.model("hero", heroSchema);
+const Hero = mongoose.model("Hero", heroSchema);
 
 module.exports = Hero;
