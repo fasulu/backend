@@ -16,7 +16,7 @@ const app = express();
 app.use(cors);
 
 app.use(express.json());
-app.get("/hero", (req, res) => {
+app.get("/", (req, res) => {
     res.json()
 })
 
@@ -24,10 +24,10 @@ const heroSchema = new mongoose.Schema({
     name: String,
     power: [String],
     color: String,
-    isAlive: String,
+    isAlive: Boolean,
     age: Number,
     image: String,
-    created: { type: Date, default: Date.now('08-06-2021') }
+    created: { type: Date, default: Date.now() }
 })
 
 const Hero = mongoose.model("hero", heroSchema)
