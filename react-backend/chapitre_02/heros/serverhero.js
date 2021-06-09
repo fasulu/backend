@@ -28,21 +28,6 @@ const debug = (req, res, next) => {
 
 app.use(debug);
 
-app.get("/heroes", async (req, res) => {        // show available hero details in brower
-
-    console.log("Im in get")
-
-    try {
-        const heros = await Hero.find({})
-
-        console.log(heros)
-
-        res.json(heros)
-
-    } catch (error) {
-        console.log("error on fetching data")
-    }
-})
 
 
 // data inserted with insertMany()
@@ -52,7 +37,7 @@ const addHeros = async () => {
         await Hero.deleteMany({})   // delete if already exist
 
         await Hero.insertMany(      // insert the following data into heros collection(table)
-            [
+        [
                 {
                     name: "Iron Man",
                     power: ["money"],
@@ -83,12 +68,172 @@ const addHeros = async () => {
                 console.log("Error", error)
             })
         
+        } catch (error) {
+            console.log(error)
+        }
+}
+
+addHeros(); // if need(to add db and hero collection) execute this line 
+
+app.get("/heroes", async (req, res) => {        // show available hero details in brower
+
+    console.log("Im in get")
+
+    try {
+        const heros = await Hero.find({})
+
+        // console.log(heros)
+
+        res.json(heros)
+
     } catch (error) {
-        console.log(error)
+        console.log("error on fetching data")
+    }
+})
+
+const findHero = async (name) => {
+    try {
+        return await Hero.findOne({
+            name: {
+                $regex: new RegExp("^" + name, "i")
+            }
+        })
+
+    } catch (err) {
+        console.error(err)
+
+        return null
     }
 }
 
-addHeros();
+app.get("/heroes/:name", async (req, res) => {      //  http://localhost:8000/heroes/daredevil
+
+    try {
+        const nameHero = req.params.name
+        const hero = await findHero(nameHero)
+
+        if (hero) {
+            res.json({ hero })
+        } else {
+            res.json({
+                message: "Hero not found"
+            })
+        }
+    } catch (err) {
+        console.error(err)
+
+        res.status(500).json({ errorMessage: "There was a problem :(" })
+    }
+
+})
+
+app.get("/heroes/:name/powers", async (req, res) => {       //http://localhost:8000/heroes/thor/powers
+    try {
+        const nameHero = req.params.name
+        const hero = await findHero(nameHero)
+
+        if (hero) {
+            res.json({ powers: hero.power })
+        } else {
+            res.json({
+                message: "Hero not found"
+            })
+        }
+    } catch (err) {
+        console.error(err)
+
+        res.status(500).json({ errorMessage: "There was a problem :(" })
+    }
+})
+
+const transformName = (req, res, next) => {
+    if (req.body.name === undefined) {
+        res.json({
+            errorMessage: "To add a hero send at least he's name"
+        })
+    } else {
+        req.body.name = req.body.name
+
+        next()
+    }
+}
+
+app.post("/heroes", transformName, async (req, res, next) => {      http://localhost:8000/heroes/
+
+    try {
+        const heroBody = req.body
+        const hero = await findHero(heroBody.name)
+
+        if (hero) {
+            res.status(400).json({
+                message: "The hero already exists"
+            })
+        } else {
+            next()
+        }
+
+    } catch (err) {
+        console.error(err)
+
+        res.status(500).json({ errorMessage: "There was a problem :(" })
+    }
+}, async (req, res) => {
+
+    try {
+        const hero = req.body
+
+        const newHero = await Hero.create(hero)
+
+        res.json({
+            message: "Ok, hero was created!",
+            newHero
+        })
+    } catch (err) {
+        console.error(err)
+
+        res.status(500).json({ errorMessage: "There was a problem :(" })
+    }
+
+})
+
+app.post("/heroes/:name/powers", async (req, res) => {
+
+    try {
+        const nameHero = req.params.name
+
+        console.log(nameHero)
+
+        const hero = await findHero(nameHero)
+
+        console.log(hero)
+
+        if (hero) {
+            const heroPower = req.body.power
+
+            console.log(heroPower)
+
+            hero.power.push(heroPower)
+
+            const heroNewPowers = hero.power
+
+            await Hero.updateOne({ name: hero.name }, { power: heroNewPowers })
+
+            res.json({
+                message: "Ok, hero power was added!"
+            })
+
+        } else {
+            res.status(400).json({ errorMessage: "Hero was not found" })
+
+        }
+
+    } catch (err) {
+        console.error(err)
+
+        res.status(500).json({ errorMessage: "There was a problem :(" })
+    }
+
+})
 
 app.get("*", (req, res) => {
     res.json({
