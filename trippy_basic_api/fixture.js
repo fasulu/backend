@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const Hotel = require("./model/hotel");
-const Restaurant = require("./model/restaurant");
+const Hotel = require("./model/hotelSchema");
+const Restaurant = require("./model/restaurantSchema");
 
 mongoose.connect("mongodb://localhost:27017/trippy_basics", (err) => {
     if (err) {
@@ -39,7 +39,7 @@ const addHotels = async () => {
                 priceCategory: 3
             },
             {
-                nname: "Hotel Parister",
+                name: "Hotel Parister",
                 address: "19 Rue Saulnier",
                 city: "Paris 75009",
                 country: "France",
@@ -49,7 +49,7 @@ const addHotels = async () => {
                 priceCategory: 2
             },
             {
-                nname: "Mandarin Oriental Hyde Park",
+                name: "Mandarin Oriental Hyde Park",
                 address: "66 Knightbridge",
                 city: "London SW1X",
                 country: "England",
@@ -59,7 +59,7 @@ const addHotels = async () => {
                 priceCategory: 3
             },
             {
-                nname: "Four Seasons Hotel London",
+                name: "Four Seasons Hotel London",
                 address: "Hamilton Place, Park Lane",
                 city: "London W1J",
                 country: "England",
@@ -69,7 +69,7 @@ const addHotels = async () => {
                 priceCategory: 2
             },
             {
-                nname: "Kimpton Fitzroy",
+                name: "Kimpton Fitzroy",
                 address: "1-8 Russell Square",
                 city: "London WC1B",
                 country: "England",
@@ -79,7 +79,7 @@ const addHotels = async () => {
                 priceCategory: 2
             },
             {
-                nname: "The Plaza",
+                name: "The Plaza",
                 address: "5th Ave Central Park",
                 city: "New York 10022",
                 country: "US",
@@ -124,7 +124,7 @@ const addRestaurants = async () => {
                 priceCategory: 3
             },
             {
-                nname: "Le Bouclard",
+                name: "Le Bouclard",
                 address: "1 Rue Cavallotti",
                 city: "Paris 75018",
                 country: "France",
@@ -133,7 +133,7 @@ const addRestaurants = async () => {
                 priceCategory: 2
             },
             {
-                nname: "La Cantine de Meme",
+                name: "La Cantine de Meme",
                 address: "11 Rue Brochant",
                 city: "Paris 75017",
                 country: "France",
@@ -142,7 +142,7 @@ const addRestaurants = async () => {
                 priceCategory: 3
             },
             {
-                nname: "L'Arcane",
+                name: "L'Arcane",
                 address: "52 Rue Lamarck",
                 city: "Paris 75018",
                 country: "France",
@@ -151,7 +151,7 @@ const addRestaurants = async () => {
                 priceCategory: 3
             },
             {
-                nname: "JJ Beaumarchais",
+                name: "JJ Beaumarchais",
                 address: "92 Boulevard Beaumarchais",
                 city: "Paris 75011",
                 country: "France",
@@ -160,7 +160,7 @@ const addRestaurants = async () => {
                 priceCategory: 2
             },
             {
-                nname: "Guy Savoy",
+                name: "Guy Savoy",
                 address: "11 Quai de Conti",
                 city: "Paris 75006",
                 country: "France",

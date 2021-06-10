@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const Hotel = require('../model/hotel');
-const Restaurant = require('../model/restaurant');
+const Hotel = require('../model/hotelSchema');
+const Restaurant = require('../model/restaurantSchema');
 
 const app = express();
 app.use(cors());
@@ -27,14 +27,15 @@ const debug = (req, res, next) => {
 
 }
 
+// shwow all hotels in the collection
 app.get("/hotels", async (req, res) => {    
 
     console.log("Im in get")
 
     try {
 
-        const hotels = await Hotel.find({}) // find all hotel details available in the collecion
-        res.json(hotels)                    // list all hotel in json format
+        const hotels = await Hotel.find({})  // find all hotel details available in the collecion
+        res.json(hotels)                            // list all hotel in json format
 
     } catch (error) {
 
@@ -59,6 +60,7 @@ const findHotelID = async (hotelID) => {
     }
 }
 
+// find hotel Id
 app.get("/hotels/:id", async (req, res) => {
     try {
 
@@ -88,12 +90,13 @@ app.get("/hotels/:id", async (req, res) => {
     }
 })
 
+// add new hotel
 app.post("/hotels", async (req, res, next) => {
 
     try {
         
-        const hotelBody = req.body
-        const hotel = await findHotelID(hotelBody.name)
+        const hotelBody = req.body                      // take body info
+        const hotel = await findHotelID(hotelBody.name) // from body info find hotelID
 
         if(hotel) {
 
@@ -119,7 +122,7 @@ app.post("/hotels", async (req, res, next) => {
     try {
         
         const hotel = req.body
-        const newHotel = await Hotel.create(hotel)
+        const newHotel = await Hotel.create(hotel)  // take hotel info from body and add it into hotel collection 
 
         res.json({
             message: "Hotel created",
@@ -133,6 +136,35 @@ app.post("/hotels", async (req, res, next) => {
         })
     }
 })
+
+// update hotel using app.put
+
+app.put("/hotels", async (req, res, next) => {
+
+    try {
+
+        const hotelBody = req.body                      // take body info
+        console.log("hotelID from user", hotelBody)
+        const hotel = await findHotelID(hotelBody) // from body info find hotelID
+
+        if(hotel) {
+
+            res.status(400).json({
+                message: "The hotel already exist"
+            })
+
+            next()
+
+        } else {
+            res.status(400).json({
+                message: "The hotel not exist in the list"
+            })
+        }   
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 
 app.get("*", (req, res) => {
     res.json({
