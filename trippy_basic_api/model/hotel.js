@@ -28,3 +28,5 @@ module.exports = Hotel;
 
 // const Restaurant = mongoose.model("Restaurant", restaurantSchema);
 // module.exports = Restaurant ;
+
+// module.exports = { Hotel, Restaurant }

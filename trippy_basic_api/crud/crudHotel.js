@@ -10,7 +10,7 @@ app.use(express.json());
 const port = 8000;
 
 // connect to trippy database
-mongoose.connect("mongodb://localhost:27017/trippy_basics", (err) => {
+mongoose.connect("mongodb://localhost:27017/trippy_basics", { useNewUrlParser: true }, { useUnifiedTopology: true },  (err) => {
     if(err) {
 
         console.log(err);
@@ -85,6 +85,52 @@ app.get("/hotels/:id", async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({ errorMessage: "There was a problem :(" })
+    }
+})
+
+app.post("/hotels", async (req, res, next) => {
+
+    try {
+        
+        const hotelBody = req.body
+        const hotel = await findHotelID(hotelBody.name)
+
+        if(hotel) {
+
+            res.status(400).json({
+                message: "The hotel already exist"
+
+            })
+        } else {
+
+            next()
+
+        }
+    } catch (error) {
+
+        console.log(error)
+
+        res.status(500).json({
+            errorMessage: "There is a problem"
+        })
+    }
+}, async (req, res) => {
+
+    try {
+        
+        const hotel = req.body
+        const newHotel = await Hotel.create(hotel)
+
+        res.json({
+            message: "Hotel created",
+        
+        })
+    } catch{err} {
+        console.log(err)
+
+        res.status(500).json({
+            errorMessage: "there is a problem"
+        })
     }
 })
 
