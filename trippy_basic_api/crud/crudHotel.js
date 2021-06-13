@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const Hotel = require('../model/hotelSchema');
-const Restaurant = require('../model/restaurantSchema');
 
 const app = express();
 app.use(cors());
@@ -28,6 +27,7 @@ const debug = (req, res, next) => {
 }
 
 // shwow all hotels in the collection
+
 app.get("/hotels", async (req, res) => {
 
     console.log("Im in get")
@@ -60,11 +60,13 @@ const findHotelID = async (hotelID) => {
     }
 }
 
-// find hotel Id
-app.get("/hotels/:id", async (req, res) => {
-    try {
+// find hotel by Id
 
-        console.log("Im in get id")
+app.get("/hotels/:id", async (req, res) => {
+    
+            console.log("Im in get id")
+
+    try {
 
         const hotelID = req.params.id           // get id from user
 
@@ -91,8 +93,11 @@ app.get("/hotels/:id", async (req, res) => {
 })
 
 // add new hotel
+
 app.post("/hotels", async (req, res, next) => {
 
+    console.log("IAM IN POST REQUEST")
+    
     try {
 
         const hotelBody = req.body                      // take body info
@@ -150,14 +155,14 @@ app.put("/hotels/:id", async (req, res, next) => {
 
         console.log("hotelID from user", requestid)
 
-        await Hotel.findById(requestid, (err, hotelUpdate) => {
+        await Hotel.findById(requestid, (err, hotelUpdate) => {     // find given hotel id and update name field of the document with given hotel
 
             if (err) {
                 res.json({ message: "Error while putting record" })
                 next()
             }
 
-            hotelUpdate.name = requestBody.name;
+            hotelUpdate.name = requestBody.name;    // hotel name in the body 
 
             hotelUpdate.save(function (err) {
                 if (err) {
@@ -186,10 +191,10 @@ app.delete("/hotels/:id", async (req, res, next) => {
 
         const id = await findHotelID(requestid)   // send to findHotelID and get back if found
 
-        console.log("Hotel Id found", id)
+        console.log("Hotel Id found", id)   // hotel details found in document 
 
         if (id) {
-            await Hotel.deleteOne({ _id: requestid}, (err, res) => {
+            await Hotel.deleteOne({ _id: requestid}, (err, res) => {        // delete the entire document found in given hotelid 
                 if(err){
                     console.log("error while deleting", err)
                 }
@@ -209,6 +214,7 @@ app.delete("/hotels/:id", async (req, res, next) => {
     }
 })
 
+//************ */
 
 app.get("*", (req, res) => {
     res.json({
