@@ -10,8 +10,8 @@ app.use(express.json());
 const port = 8000;
 
 // connect to trippy database
-mongoose.connect("mongodb://localhost:27017/trippy_basics", { useNewUrlParser: true }, { useUnifiedTopology: true },  (err) => {
-    if(err) {
+mongoose.connect("mongodb://localhost:27017/trippy_basics", { useNewUrlParser: true }, { useUnifiedTopology: true }, (err) => {
+    if (err) {
 
         console.log(err);
 
@@ -23,12 +23,12 @@ mongoose.connect("mongodb://localhost:27017/trippy_basics", { useNewUrlParser: t
 const debug = (req, res, next) => {
 
     console.log("I received a request!"),
-    next();
+        next();
 
 }
 
 // shwow all hotels in the collection
-app.get("/hotels", async (req, res) => {    
+app.get("/hotels", async (req, res) => {
 
     console.log("Im in get")
 
@@ -41,7 +41,7 @@ app.get("/hotels", async (req, res) => {
 
         console.log(error)
         res.status(500).json({ errorMessage: "There was a problem :(" })    // on error show error message
-    }   
+    }
 })
 
 const findHotelID = async (hotelID) => {
@@ -50,9 +50,9 @@ const findHotelID = async (hotelID) => {
 
     try {
 
-        return await Hotel.findOne({_id: hotelID }) // search, if found return back to app.get(/hotels/:id)
+        return await Hotel.findOne({ _id: hotelID }) // search, if found return back to app.get(/hotels/:id)
 
-    } catch(error) {
+    } catch (error) {
 
         console.log(error)
 
@@ -64,19 +64,19 @@ const findHotelID = async (hotelID) => {
 app.get("/hotels/:id", async (req, res) => {
     try {
 
-        console.log("Im in get id") 
+        console.log("Im in get id")
 
         const hotelID = req.params.id           // get id from user
 
-        console.log("Im in get id",hotelID)
+        console.log("Im in get id", hotelID)
 
         const id = await findHotelID(hotelID)   // send to findHotelID and get back if found
 
         console.log("Hotel Id found", id)
 
-        if(id) {
+        if (id) {
 
-            res.json({id})      // show all details about the corresponding HotelID
+            res.json({ id })      // show all details about the corresponding HotelID
 
         } else {
 
@@ -94,11 +94,11 @@ app.get("/hotels/:id", async (req, res) => {
 app.post("/hotels", async (req, res, next) => {
 
     try {
-        
+
         const hotelBody = req.body                      // take body info
         const hotel = await findHotelID(hotelBody.name) // from body info find hotelID
 
-        if(hotel) {
+        if (hotel) {
 
             res.status(400).json({
                 message: "The hotel already exist"
@@ -120,15 +120,15 @@ app.post("/hotels", async (req, res, next) => {
 }, async (req, res) => {
 
     try {
-        
+
         const hotel = req.body
         const newHotel = await Hotel.create(hotel)  // take hotel info from body and add it into hotel collection 
 
         res.json({
             message: "Hotel created",
-        
+
         })
-    } catch{err} {
+    } catch { err } {
         console.log(err)
 
         res.status(500).json({
@@ -139,29 +139,73 @@ app.post("/hotels", async (req, res, next) => {
 
 // update hotel using app.put
 
-app.put("/hotels", async (req, res, next) => {
+app.put("/hotels/:id", async (req, res, next) => {
 
     try {
 
-        const hotelBody = req.body                      // take body info
-        console.log("hotelID from user", hotelBody)
-        const hotel = await findHotelID(hotelBody) // from body info find hotelID
+        let requestid = req.params.id           // take hotelID params info
+        const requestBody = req.body             // take hotelbody info
 
-        if(hotel) {
+        console.log("hotel name from user", requestBody)
 
-            res.status(400).json({
-                message: "The hotel already exist"
+        console.log("hotelID from user", requestid)
+
+        await Hotel.findById(requestid, (err, hotelUpdate) => {
+
+            if (err) {
+                res.json({ message: "Error while putting record" })
+                next()
+            }
+
+            hotelUpdate.name = requestBody.name;
+
+            hotelUpdate.save(function (err) {
+                if (err) {
+                    res.json({ message: "err", err })
+                }
+                res.json({ message: "Hotel updated" });
+            })
+        })
+
+    } catch (error) {
+        console.log("Something went wrong:-----", error)
+    }
+})
+
+// delete record(document) using app.delete()
+
+app.delete("/hotels/:id", async (req, res, next) => {
+
+    console.log("IAM IN DELETE");
+
+    try {
+
+        let requestid = req.params.id           // take hotelID params info
+        
+        console.log("hotelID from user", requestid)
+
+        const id = await findHotelID(requestid)   // send to findHotelID and get back if found
+
+        console.log("Hotel Id found", id)
+
+        if (id) {
+            await Hotel.deleteOne({ _id: requestid}, (err, res) => {
+                if(err){
+                    console.log("error while deleting", err)
+                }
             })
 
-            next()
+            res.json({ message: `${requestid} is deleted successfully` })
 
         } else {
-            res.status(400).json({
-                message: "The hotel not exist in the list"
+
+            res.json({
+                message: "ID not found" // exit with json error message
             })
-        }   
+        }
     } catch (error) {
         console.log(error)
+        res.status(500).json({ errorMessage: "There was a problem :(" })
     }
 })
 
