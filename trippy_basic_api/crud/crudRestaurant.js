@@ -10,8 +10,8 @@ app.use(express.json());
 const port = 8000;
 
 // connect to trippy database
-mongoose.connect("mongodb://localhost:27017/trippy_basics", { useNewUrlParser: true }, { useUnifiedTopology: true }, { useUnifiedTopology: true } , (err) => {
-    if(err) {
+mongoose.connect("mongodb://localhost:27017/trippy_basics", { useNewUrlParser: true }, { useUnifiedTopology: true }, { useUnifiedTopology: true }, (err) => {
+    if (err) {
         console.log(err);
     } else {
         console.log("I'm connected to the database")
@@ -46,23 +46,23 @@ app.get("/restaurants", async (req, res) => {
 // find restaurant by Id
 
 app.get("/restaurants/:id", async (req, res) => {
-    
+
     console.log("I'm in get restaurant ID")
 
     try {
 
         console.log("User requested restaurant Id", req.params.id)
 
-        console.log(await Restaurant.findById({ _id: req.params.id}))
+        console.log(await Restaurant.findById({ _id: req.params.id }))
 
         const restaurantDetail = await Restaurant.findById({ _id: req.params.id });
 
-        if(restaurantDetail) {
+        if (restaurantDetail) {
             res.json({
                 message: `${req.params.id} found in the restaurant list`,
                 restaurantDetail
             })
-        }else{
+        } else {
             res.json({
 
                 message: `${req.params.id} is not found in the restaurant list`
@@ -75,12 +75,13 @@ app.get("/restaurants/:id", async (req, res) => {
 })
 
 const findRestaurantID = async (restaurant) => {
+
     console.log("IAM IN findRestaurantID", restaurant)
 
     try {
 
-        // console.log("Restaurant found ", await Restaurant.findOne({ name: restaurant }))
-        return await Restaurant.findOne({ name: restaurant })
+        // console.log("Restaurant found ", await Restaurant.findOne({ _id: restaurant }))
+        return await Restaurant.findOne({ _id: restaurant })
 
     } catch (error) {
         console.log(error)
@@ -95,33 +96,102 @@ app.post("/restaurants", async (req, res, next) => {
     console.log("IAM IN POST REQUEST")
 
     try {
-        
+
         console.log("Restaurant requested to add in the list ", req.body);
 
         const restaurant = req.body
         const newRestaurant = await findRestaurantID(restaurant.name)
         console.log("returned value", newRestaurant);
 
-        if(newRestaurant) {
+        if (newRestaurant) {
             res.status(400).json({
                 message: "Restaurant already exist in the list"
             })
         } else {
 
             await Restaurant.create(restaurant)
-            
+
             res.json({
-                    message: "Restaurant added to the list"
-                    
-                })
-            }
-            
-            next()
+                message: "Restaurant added to the list"
+
+            })
+        }
+
+        next()
 
     } catch (error) {
         console.log(error)
     }
 })
+
+// update restaurant using app.put()
+
+app.put("/restaurants/:id", async (req, res, next) => {
+
+    try {
+
+        let requestid = req.params.id
+        const requestBody = req.body
+
+        console.log("Restaurant name from user is ", requestBody)
+
+        console.log("RestaurantId from user is ", requestid)
+
+        await Restaurant.findById(requestid, (err, restaurantUpdate) => {
+
+            if (err) {
+                res.json({ message: "Error while putting record" })
+                next()
+            }
+
+            restaurantUpdate.name = requestBody.name;
+
+            restaurantUpdate.save(function (err) {
+                if (err) {
+                    res.json({ message: "error", err })
+                }
+                res.json({ message: "Restaurant updated" })
+            })
+        })
+
+    } catch (error) {
+        console.log("Something went wrong:-----", error)
+    }
+})
+
+// delete record using app.delete()
+
+app.delete("/restaurants/:id", async (req, res, next) => {
+
+    console.log("IAM IN DELETE RESTAURANT");
+
+    try {
+
+        let requestId = req.params.id
+        console.log("Restaurant ID received from user", requestId);
+
+        const id = await findRestaurantID(requestId);
+
+        console.log("Restaurant Id found", id);
+
+        if (id) {
+            await Restaurant.deleteOne({ _id: requestId }, (err, res) => {
+                if (err) {
+                    console.log("error while deleting record")
+                }
+            })
+
+            res.json({ message: `${requestId} is deleted from restaurant list`})
+
+        } else {
+            res.json({ message: "ID not found" })
+        }
+
+    } catch (error) {
+        console.log("Something went wrong...", error)
+    }
+})
+
 //************* */
 
 app.get("*", (req, res) => {

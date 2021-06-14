@@ -214,6 +214,27 @@ app.delete("/hotels/:id", async (req, res, next) => {
     }
 })
 
+// Pagination
+
+app.get("/hotels?limit=3", async (req, res) => {
+
+    console.log("Im in pagination")
+
+    const resultsPerPage = 3;
+    
+
+    try {
+
+        const hotels = await Hotel.paginate({}, 1, 3)  // find all hotel details available in the collecion
+        res.json(hotels)                            // list all hotel in json format
+
+    } catch (error) {
+
+        console.log(error)
+        res.status(500).json({ errorMessage: "There was a problem :(" })    // on error show error message
+    }
+})
+
 //************ */
 
 app.get("*", (req, res) => {
