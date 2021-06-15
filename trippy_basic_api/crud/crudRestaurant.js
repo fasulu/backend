@@ -192,6 +192,59 @@ app.delete("/restaurants/:id", async (req, res, next) => {
     }
 })
 
+// Pagination
+
+// app.get("/restaurants?limit=3", async (req, res) => {
+    const limit3PerPage = async () => {
+
+        console.log("Im in pagination")
+    
+        try {
+    
+            const restaurants = await Restaurant.aggregate([
+    
+                {$limit: 3}                             // display 3 items per page
+            
+            ])  
+            console.log(restaurants)
+    
+        } catch (error) {
+    
+            console.log(error)
+            res.status(500).json({ errorMessage: "There was a problem :(" })    // on error show error message
+        }
+    }
+
+    const limit2PageWith2PriceCategory = async () => {
+
+        console.log("Im in pagination")
+    
+        try {
+    
+            const restaurants = await Restaurant.aggregate([
+    
+                {
+                    // $match: { stars: { $gt : 4 } }    // display matches with greater than 4 stars
+                    // $match: { stars: 4 }           // display matches with 4 stars
+                    $match: { priceCategory: { $gt : 2 } }  // display matches with greater than 2 priceCategory
+                },
+    
+                {$limit: 2}                             // display 2 items per page
+            
+            ])  
+            console.log(restaurants)
+    
+        } catch (error) {
+    
+            console.log(error)
+            res.status(500).json({ errorMessage: "There was a problem :(" })    // on error show error message
+        }
+    }
+
+    limit3PerPage()
+
+    limit2PageWith2PriceCategory()
+
 //************* */
 
 app.get("*", (req, res) => {

@@ -216,24 +216,56 @@ app.delete("/hotels/:id", async (req, res, next) => {
 
 // Pagination
 
-app.get("/hotels?limit=3", async (req, res) => {
+// app.get("/hotels?limit=3", async (req, res) => {
+const limit3PerPage = async () => {
 
     console.log("Im in pagination")
 
-    const resultsPerPage = 3;
-    
-
     try {
 
-        const hotels = await Hotel.paginate({}, 1, 3)  // find all hotel details available in the collecion
-        res.json(hotels)                            // list all hotel in json format
+        const hotels = await Hotel.aggregate([
+
+            {$limit: 3}                             // display 3 items per page
+        
+        ])  
+        console.log(hotels)
 
     } catch (error) {
 
         console.log(error)
         res.status(500).json({ errorMessage: "There was a problem :(" })    // on error show error message
     }
-})
+}
+
+const limit3PageWith2PriceCategory = async () => {
+
+    console.log("Im in pagination")
+
+    try {
+
+        const hotels = await Hotel.aggregate([
+
+            {
+                // $match: { stars: { $gt : 4 } }    // display matches with greater than 4 stars
+                // $match: { stars: 4 }           // display matches with 4 stars
+                $match: { priceCategory: { $gt : 2 } }  // display matches with greater than 2 priceCategory
+            },
+
+            {$limit: 3}                             // display 3 items per page
+        
+        ])  
+        console.log(hotels)
+
+    } catch (error) {
+
+        console.log(error)
+        res.status(500).json({ errorMessage: "There was a problem :(" })    // on error show error message
+    }
+}
+
+limit3PerPage()
+
+limit3PageWith2PriceCategory()
 
 //************ */
 
