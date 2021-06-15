@@ -1,17 +1,28 @@
 const express = require('express');
-const multer = require('multer');
+// const multer = require('multer');
 const cors = require("cors")
+const mongoose = require('mongoose');
+const { User } = require('./src/controllers/user')
 
 // const fs = require("fs");
 // const path = require("path");
 // const upload = multer({ dest: 'public/uploads/' });
 
-const port = 8001
-
 const app = express();
 
 app.use(cors())
+const port = 8001
 
+
+app.get("/users", async (req, res) => {
+    
+    console.log("Im in get")
+
+    res.json({
+        message: "test"
+    })
+
+})
 
 
 //*************** */

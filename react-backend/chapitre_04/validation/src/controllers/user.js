@@ -9,14 +9,6 @@ const userSchema = new Schema({
     city: String
 });
 
-// schema for hotel room
-const roomSchema = new Schema({
-    people: Number,
-    price: Number,
-    hasBathroom: Boolean
-})
+const User = mongoose.model("User", userSchema);
 
-const Hotel = mongoose.model("Hotel", hotelSchema);
-const Room = mongoose.model("Room", roomSchema);
-
-module.exports = { Hotel, Room };   // hotel and room export
+module.exports = User ;   // user export
