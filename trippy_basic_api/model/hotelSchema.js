@@ -9,12 +9,20 @@ const hotelSchema = new Schema({
     stars: { type: Number, min: 1, max: 5},
     hasSpa: Boolean,
     hasPool: Boolean,
-    priceCategory: { type: Number, min:1, max: 3 } 
+    priceCategory: { type: Number, min:1, max: 3 },
+    roomId:  { type: Array, String }
 });
 
-const Hotel = mongoose.model("Hotel", hotelSchema);
+const roomSchema = new Schema({
+    people: Number,
+    price: Number,
+    hasBathroom: Boolean
+})
 
-module.exports = Hotel;
+const Hotel = mongoose.model("Hotel", hotelSchema);
+const Room = mongoose.model("Room", roomSchema);
+
+module.exports = { Hotel, Room };
 
 // const restaurantSchema = new Schema({
 //     name: String,

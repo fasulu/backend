@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const Hotel = require('../model/hotelSchema');
+const {Hotel, Room } = require('../model/hotelSchema');
 
 const app = express();
 app.use(cors());
@@ -217,7 +217,7 @@ app.delete("/hotels/:id", async (req, res, next) => {
 // Pagination
 
 // app.get("/hotels?limit=3", async (req, res) => {
-const limit3PerPage = async () => {
+const limit3PerPage = async (err, req, res) => {
 
     console.log("Im in pagination")
 
@@ -233,11 +233,10 @@ const limit3PerPage = async () => {
     } catch (error) {
 
         console.log(error)
-        res.status(500).json({ errorMessage: "There was a problem :(" })    // on error show error message
     }
 }
 
-const limit3PageWith2PriceCategory = async () => {
+const limit3PageWith2PriceCategory = async (err, req, res) => {
 
     console.log("Im in pagination")
 
@@ -259,7 +258,6 @@ const limit3PageWith2PriceCategory = async () => {
     } catch (error) {
 
         console.log(error)
-        res.status(500).json({ errorMessage: "There was a problem :(" })    // on error show error message
     }
 }
 

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Hotel = require("./model/hotelSchema");
+const { Hotel, Room }  = require("./model/hotelSchema");
 const Restaurant = require("./model/restaurantSchema");
 
 mongoose.connect("mongodb://localhost:27017/trippy_basics", (err) => {
@@ -9,8 +9,6 @@ mongoose.connect("mongodb://localhost:27017/trippy_basics", (err) => {
         console.log("I'm connected to the database")
     }
 })
-
-
 
 const addHotels = async () => {
 
@@ -26,7 +24,9 @@ const addHotels = async () => {
                 stars: 5,
                 hasSpa: true,
                 hasPool: true,
-                priceCategory: 3
+                priceCategory: 3,
+                rooms: "test"
+
             },
             {
                 name: "Maison Souquet",
@@ -91,6 +91,59 @@ const addHotels = async () => {
         ])
 
         console.log("The collection of Hotels are recreated with the database");
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+//*************** */
+
+const addRooms = async () => {
+
+    try {
+        await Room.deleteMany({})
+
+        await Room.insertMany([
+            {
+                people: 3,
+                price: 199.99,
+                hasBathroom: true,
+                
+            },
+            {
+                people: 2,
+                price: 149.99,
+                hasBathroom: true,
+                
+            },
+            {
+                people: 1,
+                price: 99.99,
+                hasBathroom: true,
+                
+            },
+            {
+                people: 1,
+                price: 49.99,
+                hasBathroom: false,
+                
+            },
+            {
+                people: 2,
+                price: 299.99,
+                hasBathroom: true,
+                
+            },
+            {
+                people: 3,
+                price: 499.99,
+                hasBathroom: true,
+                
+            }
+        ])
+
+        console.log("The collection of Rooms are recreated with the database");
 
     } catch (err) {
         console.log(err)
@@ -180,3 +233,5 @@ const addRestaurants = async () => {
 addHotels();    // if need (to add db and hotel collection) execute this line 
 
 addRestaurants();   // if need (to add db and restaurant collection) execute this line 
+
+addRooms();   // if need (to add db and room collection) execute this line 
