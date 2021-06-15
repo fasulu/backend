@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// Schema for hotel
 const hotelSchema = new Schema({
     name: String,
     address: String,
@@ -13,6 +14,7 @@ const hotelSchema = new Schema({
     roomId:  { type: Array, String }
 });
 
+// schema for hotel room
 const roomSchema = new Schema({
     people: Number,
     price: Number,
@@ -22,7 +24,7 @@ const roomSchema = new Schema({
 const Hotel = mongoose.model("Hotel", hotelSchema);
 const Room = mongoose.model("Room", roomSchema);
 
-module.exports = { Hotel, Room };
+module.exports = { Hotel, Room };   // hotel and room export
 
 // const restaurantSchema = new Schema({
 //     name: String,

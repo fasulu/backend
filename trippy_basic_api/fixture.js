@@ -1,14 +1,18 @@
 const mongoose = require('mongoose');
 const { Hotel, Room }  = require("./model/hotelSchema");
-const Restaurant = require("./model/restaurantSchema");
+const { Restaurant, Tables } = require("./model/restaurantSchema");
 
-mongoose.connect("mongodb://localhost:27017/trippy_basics", (err) => {
+// connect to database
+
+mongoose.connect("mongodb://localhost:27017/trippy_basics", (err) => {  
     if (err) {
         console.log(err);
     } else {
         console.log("I'm connected to the database")
     }
 })
+
+// create collection of documents in hotel 
 
 const addHotels = async () => {
 
@@ -24,9 +28,7 @@ const addHotels = async () => {
                 stars: 5,
                 hasSpa: true,
                 hasPool: true,
-                priceCategory: 3,
-                rooms: "test"
-
+                priceCategory: 3
             },
             {
                 name: "Maison Souquet",
@@ -97,7 +99,7 @@ const addHotels = async () => {
     }
 }
 
-//*************** */
+// create collection of documents in room 
 
 const addRooms = async () => {
 
@@ -151,6 +153,8 @@ const addRooms = async () => {
 }
 
 //************ */
+
+// create collection of documents in restaurant 
 
 const addRestaurants = async () => {
 
@@ -230,8 +234,75 @@ const addRestaurants = async () => {
     }
 }
 
-addHotels();    // if need (to add db and hotel collection) execute this line 
+// create collection of documents in table
 
-addRestaurants();   // if need (to add db and restaurant collection) execute this line 
+const addTables = async () => {
 
-addRooms();   // if need (to add db and room collection) execute this line 
+    try {
+
+        await Tables.deleteMany({})
+
+        await Tables.insertMany([
+            {
+                seat: 3,
+                iSVIP: false,
+                
+            },
+            {
+                seat: 2,
+                iSVIP: true,
+                
+            },
+            {
+                seat: 4,
+                iSVIP: true,
+                
+            },
+            {
+                seat: 5,
+                iSVIP: true,
+                
+            },
+            {
+                seat: 6,
+                iSVIP: false,
+                
+            },
+            {
+                seat: 7,
+                iSVIP: true,
+                
+            },
+            {
+                seat: 8,
+                iSVIP: false,
+                
+            },
+            {
+                seat: 9,
+                iSVIP: false,
+                
+            },
+            {
+                seat: 10,
+                iSVIP: false,
+                
+            }
+            
+        ])
+        
+        console.log("The collection of Tables are recreated with the database");
+
+    } catch (error) {
+        console.log("Something went wrong...", error)
+    }
+}
+
+// addHotels();    // if need (to add db and hotel collection) execute this line 
+
+// addRestaurants();   // if need (to add db and restaurant collection) execute this line 
+
+// addRooms();   // if need (to add db and room collection) execute this line 
+
+// addTables();     // if need (to add db and table collection) execute this line 
+

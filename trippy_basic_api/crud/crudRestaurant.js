@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const Restaurant = require('../model/restaurantSchema');
+const { Restaurant, Tables} = require('../model/restaurantSchema');
 const { findById } = require('../model/restaurantSchema');
 
 const app = express();
