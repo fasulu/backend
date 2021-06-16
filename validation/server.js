@@ -29,7 +29,7 @@ app.use("/users", route)
 
 //#region get userlist  here
 
-app.get("/users/add", debug, async (req, res) => {
+app.get("/users", debug, async (req, res) => {
 
     console.log("Im in get user")
 
@@ -53,7 +53,7 @@ app.get("/users/add", debug, async (req, res) => {
 
 //#region add new user with express-validator in to the database
 
-app.post("/users", debug,
+app.post("/users/add", debug,
 
     body("name").not().isEmpty().trim().escape().isLength({ min: 4, max: 20 }),
     body("email").isEmail().normalizeEmail(),
@@ -103,32 +103,63 @@ app.post("/users", debug,
 
 //#region get information on username
 
-app.get("/users/:name", debug, async (req, res) => {
+// app.get("/users/:username", debug, async (req, res) => {
 
-    console.log("IM IN GET USER INFO BY NAME", req.params.name)
+//     console.log("IM IN GET USER INFO BY NAME", req.params.username)
 
 
-    const userToFind = req.params.name;
+//     const userToFind = req.params.username;
 
-    const userFound = await modelUser.findOne({ name: userToFind })
+//     const userFound = await modelUser.findOne({ name: userToFind })
 
-    console.log("user found in the collection", userFound);
+//     console.log("username found in the collection", userFound);
 
-    if (userFound) {
+//     if (userFound) {
 
-        console.log("User found ", userFound)
+//         console.log("User found ", userFound)
+//         res.json({
+//             message: "User Found",
+//             userFound
+//         })
+//     } else {
+//         res.json({
+//             message: `Couldn't found requested user ${userToFind} in the list`
+//         })
+//     }
+
+// })
+
+//#endregion
+
+//#region get information by email
+
+app.get("/users/:email", debug, async (req, res) => {
+
+    console.log("IM IN GET USER INFO BY EMAIL", req.params.email)
+
+
+    const emailToFind = req.params.email;
+
+    const emailFound = await modelUser.findOne({ email: emailToFind })
+
+    console.log("user email found in the collection", emailFound);
+
+    if (emailFound) {
+
+        console.log("User found ", emailFound)
         res.json({
-            message: "User Found",
-            userFound
+            message: "User details as per email ID",
+            emailFound
         })
     } else {
         res.json({
-            message: `Couldn't found requested user ${userToFind} in the list`
+            message: `Couldn't found requested email ID ${emailToFind} in the list`
         })
     }
 
-
 })
+
+
 
 //#endregion
 
