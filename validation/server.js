@@ -29,14 +29,13 @@ app.use("/users", route)
 
 //#region get userlist  here
 
-app.get("/users", debug, async (req, res) => {
+app.get("/users/add", debug, async (req, res) => {
 
     console.log("Im in get user")
 
-
     try {
 
-        const userlist = await User.find({})
+        const userlist = await modelUser.find({})
 
         res.json(userlist)
 
@@ -56,10 +55,10 @@ app.get("/users", debug, async (req, res) => {
 
 app.post("/users", debug,
 
-        body("name").not().isEmpty().trim().escape().isLength({ min: 4, max: 20 }),
-        body("email").isEmail().normalizeEmail(),
-        body("age").toInt().isLength({ min: 1, max: 2 }),
-        body("city").not().isEmpty().trim().isLength({ min: 3, max: 25 })
+    body("name").not().isEmpty().trim().escape().isLength({ min: 4, max: 20 }),
+    body("email").isEmail().normalizeEmail(),
+    body("age").toInt().isLength({ min: 1, max: 2 }),
+    body("city").not().isEmpty().trim().isLength({ min: 3, max: 25 })
 
     , async (req, res, next) => {
 
@@ -75,9 +74,9 @@ app.post("/users", debug,
                 return res.json({
                     message: "validation error",
                     errors: errors.array()
-                })  
-                          
-            }else{
+                })
+
+            } else {
                 next()
             }
         } catch (error) {
@@ -89,7 +88,7 @@ app.post("/users", debug,
         try {
 
             const newuser = req.body
-            const newUser  = await modelUser.create(newuser)
+            const newUser = await modelUser.create(newuser)
 
             res.json({
                 message: "New user added"
@@ -104,11 +103,31 @@ app.post("/users", debug,
 
 //#region get information on username
 
-app.get("/users/:name", debug, (req, res) => {
+app.get("/users/:name", debug, async (req, res) => {
 
     console.log("IM IN GET USER INFO BY NAME", req.params.name)
 
-    res.json({ message: ""})
+
+    const userToFind = req.params.name;
+
+    const userFound = await modelUser.findOne({ name: userToFind })
+
+    console.log("user found in the collection", userFound);
+
+    if (userFound) {
+
+        console.log("User found ", userFound)
+        res.json({
+            message: "User Found",
+            userFound
+        })
+    } else {
+        res.json({
+            message: `Couldn't found requested user ${userToFind} in the list`
+        })
+    }
+
+
 })
 
 //#endregion
