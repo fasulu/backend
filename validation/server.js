@@ -102,30 +102,30 @@ app.post("/users/add", debug,
 
 //#region get information based on username
 
-// app.get("/users/:username", debug, async (req, res) => {
+app.get("/users/:name", debug, async (req, res) => {
 
-//     console.log("IM IN GET USER INFO BY NAME", req.body.username)
+    console.log("IM IN GET USER INFO BY NAME", req.body.name)
 
-//     const userToFind = req.params.username;
+    const userToFind = req.params.name;
 
-//     const userFound = await modelUser.findOne({ name: userToFind })
+    const userFound = await modelUser.findOne({ name: userToFind })
 
-//     console.log("username found in the collection", userFound);
+    console.log("username found in the collection", userFound);
 
-//     if (userFound) {
+    if (userFound) {
 
-//         console.log("User found ", userFound)
-//         res.json({
-//             message: "User Found",
-//             userFound
-//         })
-//     } else {
-//         res.json({
-//             message: `Couldn't found requested user ${userToFind} in the list`
-//         })
-//     }
+        console.log("User found ", userFound)
+        res.json({
+            message: "User Found",
+            userFound
+        })
+    } else {
+        res.json({
+            message: `Couldn't found requested user ${userToFind} in the list`
+        })
+    }
 
-// })
+})
 
 //#endregion
 
@@ -156,6 +156,36 @@ app.post("/users/add", debug,
 //     }
 
 // })
+
+//#endregion
+
+//#region get user details by id
+
+app.get("/users/:id", debug, async (req, res) => {
+
+    console.log("IM IN GET USER INFO BY id", req.body.id)
+
+
+    const emailToFind = req.params.id;
+
+    const emailFound = await modelUser.findOne({ email: emailToFind })
+
+    console.log("user email found in the collection", emailFound);
+
+    if (emailFound) {
+
+        console.log("User found ", emailFound)
+        res.json({
+            message: "User details as per email ID",
+            emailFound
+        })
+    } else {
+        res.json({
+            message: `Couldn't found requested email ID ${emailToFind} in the list`
+        })
+    }
+
+})
 
 //#endregion
 
