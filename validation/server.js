@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
 const debug = require('./middlewares/debug')
 const modelUser = require('./model/modelUser')
-const route = require('./controllers/controllerUser')
+const userRoutes = require('./routes/userRoutes')
 
 const app = express();
 
