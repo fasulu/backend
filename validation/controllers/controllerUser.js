@@ -21,26 +21,26 @@ const getUserList = (debug, async (req, res) => {
     })
 })
 
-module.exports = getUserList
+// module.exports = getUserList
 
 
-// router.get("/", debug, async (req, res) => {
+router.get("/", debug, async (req, res) => {
 
-//     try {
+    try {
 
-//         const user = await modelUser.find().exec();
+        const user = await modelUser.find().exec();
 
-//         res.json(user)
+        res.json(user)
         
-//     } catch (error) {
+    } catch (error) {
 
-//         console.log("Error in get/users", error)
+        console.log("Error in get/users", error)
 
-//         res.json({
-//             message: "Error while searching user list"
-//         })
+        res.json({
+            message: "Error while searching user list"
+        })
         
-//     }
-// })
+    }
+})
 
 module.exports = router

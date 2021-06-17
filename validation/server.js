@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const { body, validationResult } = require('express-validator');
 const debug = require('./middlewares/debug')
 const modelUser = require('./model/modelUser')
-const userRoutes = require('./routes/userRoutes')
+const router = require('./controllers/controllerUser')
 
 const app = express();
 
@@ -25,7 +25,7 @@ mongoose.connect("mongodb://localhost:27017/validation", { useNewUrlParser: true
 
 //#endregion
 
-app.use("/users", route)
+app.use("/users", router)
 
 //#region get userlist  here
 
@@ -49,6 +49,8 @@ app.get("/users", debug, async (req, res) => {
 })
 
 //#endregion
+
+
 
 //#region add new user with express-validator in to the database
 
@@ -100,28 +102,62 @@ app.post("/users/add", debug,
 
 //#endregion
 
+
+
 //#region get information based on username
 
-app.get("/users/:name", debug, async (req, res) => {
+// app.get("/users/:name", debug, async (req, res) => {
 
-    console.log("IM IN GET USER INFO BY NAME", req.body.name)
+//     console.log("IM IN GET USER INFO BY NAME", req.body.name)
 
-    const userToFind = req.params.name;
+//     const userToFind = req.params.name;
 
-    const userFound = await modelUser.findOne({ name: userToFind })
+//     const userFound = await modelUser.findOne({ name: userToFind })
 
-    console.log("username found in the collection", userFound);
+//     console.log("username found in the collection", userFound);
 
-    if (userFound) {
+//     if (userFound) {
 
-        console.log("User found ", userFound)
+//         console.log("User found ", userFound)
+//         res.json({
+//             message: "User Found",
+//             userFound
+//         })
+//     } else {
+//         res.json({
+//             message: `Couldn't found requested user ${userToFind} in the list`
+//         })
+//     }
+
+// })
+
+//#endregion
+
+
+
+//#region get information by email
+
+app.get("/users/:email", debug, body("email").isEmail().normalizeEmail(), async (req, res) => {
+
+    console.log("IM IN GET USER INFO BY EMAIL", req.body.email)
+
+
+    const emailToFind = req.params.email;
+
+    const emailFound = await modelUser.findOne({ email: emailToFind })
+
+    console.log("user email found in the collection", emailFound);
+
+    if (emailFound) {
+
+        console.log("User found ", emailFound)
         res.json({
-            message: "User Found",
-            userFound
+            message: "User details as per email ID",
+            emailFound
         })
     } else {
         res.json({
-            message: `Couldn't found requested user ${userToFind} in the list`
+            message: `Couldn't found requested email ID ${emailToFind} in the list`
         })
     }
 
@@ -129,11 +165,13 @@ app.get("/users/:name", debug, async (req, res) => {
 
 //#endregion
 
-//#region get information by email
 
-// app.get("/users/:email", debug, async (req, res) => {
 
-//     console.log("IM IN GET USER INFO BY EMAIL", req.body.email)
+//#region get user details by id
+
+// app.get("/users/:id", debug, async (req, res) => {
+
+//     console.log("IM IN GET USER INFO BY id", req.body.email)
 
 
 //     const emailToFind = req.params.email;
@@ -159,86 +197,56 @@ app.get("/users/:name", debug, async (req, res) => {
 
 //#endregion
 
-//#region get user details by id
-
-app.get("/users/:id", debug, async (req, res) => {
-
-    console.log("IM IN GET USER INFO BY id", req.body.id)
-
-
-    const emailToFind = req.params.id;
-
-    const emailFound = await modelUser.findOne({ email: emailToFind })
-
-    console.log("user email found in the collection", emailFound);
-
-    if (emailFound) {
-
-        console.log("User found ", emailFound)
-        res.json({
-            message: "User details as per email ID",
-            emailFound
-        })
-    } else {
-        res.json({
-            message: `Couldn't found requested email ID ${emailToFind} in the list`
-        })
-    }
-
-})
-
-//#endregion
-
 //#region tried another way to find username and email
 
-app.get("/users/:userinput", debug, async (req, res) => {
+// app.get("/users/:userinput", debug, async (req, res) => {
 
-    const userToFind = req.params.userinput;
+//     const userToFind = req.params.userinput;
 
-    console.log("IM IN USERINPUT USER INFO BY NAME", userToFind)
+//     console.log("IM IN USERINPUT USER INFO BY NAME", userToFind)
 
-    try {
+//     try {
 
-        const nameFound = await modelUser.findOne({ name: userToFind })
-        const emailFound = await modelUser.findOne({ email: userToFind })
+//         const nameFound = await modelUser.findOne({ name: userToFind })
+//         const emailFound = await modelUser.findOne({ email: userToFind })
 
-        if (nameFound) {
+//         if (nameFound) {
 
-            console.log(nameFound)
+//             console.log(nameFound)
 
-            res.json({
-                message: "name found",
-                nameFound
-            })
+//             res.json({
+//                 message: "name found",
+//                 nameFound
+//             })
 
-        } else if (emailFound) {
+//         } else if (emailFound) {
 
-            console.log(emailFound)
+//             console.log(emailFound)
 
-            res.json({
-                message: "email found",
-                emailFound
-            })
-        } else {
-            res.json({
-                message: "Not found"
-            })
-        }
-    } catch (error) {
+//             res.json({
+//                 message: "email found",
+//                 emailFound
+//             })
+//         } else {
+//             res.json({
+//                 message: "Not found"
+//             })
+//         }
+//     } catch (error) {
 
-        console.log("Something went wrong while searching data")
+//         console.log("Something went wrong while searching data")
 
-        res.json({
-            message: "Something went wrong while searching data"
-        })
-    }
-})
+//         res.json({
+//             message: "Something went wrong while searching data"
+//         })
+//     }
+// })
 
 //#endregion
 
 //#region get information based on user id
 
-app.get("/users/id/:id", debug, async (req, res) => {
+app.get("/users/:id", debug, async (req, res) => {
 
     const userToFind = req.params.id;
 
