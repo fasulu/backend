@@ -102,71 +102,71 @@ app.post("/users/add", debug,
 
 //#region get information by username, email or id
 
-// app.get("/users/:userinput", debug, async (req, res) => {
+app.get("/users/:userinput", debug, async (req, res) => {
 
-//     console.log("IM IN GET USER INFO BY userinput", req.params.userinput)
+    console.log("IM IN GET USER INFO BY userinput", req.params.userinput)
 
-//     const userRequest = req.params.userinput;
+    const userRequest = req.params.userinput;
 
-//     const emailExpression = /^\S+@\S+\.\S+$/; // for email this will also work === /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})+)$/;
+    const emailExpression = /^\S+@\S+\.\S+$/; // for email this will also work === /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})+)$/;
 
-//     const idExpression = /^([a-z0-9]+)$/;      // ----> only small letters and numbers for mongodb _id field validation ,  this is to check is the number mixed in the string ---->   /\d/ is number mixed in a string
+    const idExpression = /^([a-z0-9]+)$/;      // ----> only small letters and numbers for mongodb _id field validation ,  this is to check is the number mixed in the string ---->   /\d/ is number mixed in a string
 
-//     const nameExpression = /^[a-z]+$/;    // only small letter alphabets
+    const nameExpression = /^[a-z]+$/;    // only small letter alphabets
 
-//     console.log(emailExpression.test(userRequest))
-//     console.log(idExpression.test(userRequest))
-//     console.log(nameExpression.test(userRequest))
+    console.log(emailExpression.test(userRequest))
+    console.log(idExpression.test(userRequest))
+    console.log(nameExpression.test(userRequest))
 
-//     try {
+    try {
 
-//         if (emailExpression.test(userRequest)) {    //if email true
+        if (emailExpression.test(userRequest)) {    //if email true
 
-//             console.log("Valid eMail", userRequest);
+            console.log("Valid eMail", userRequest);
 
-//             const emailFound = await modelUser.findOne({ email: userRequest })
+            const emailFound = await modelUser.findOne({ email: userRequest })
 
-//             res.json({
-//                 message: "User request is Valid eMail",
-//                 userRequest,
-//                 emailFound
-//             })
+            res.json({
+                message: "User request is Valid eMail",
+                userRequest,
+                emailFound
+            })
 
-//         } else if (/\d/.test(userRequest)) {    // if string with number(for id field)
+        } else if (/\d/.test(userRequest)) {    // if string with number(for id field)
 
-//             console.log("Valid ID", userRequest);
+            console.log("Valid ID", userRequest);
 
-//             searchFlag = "id";
+            searchFlag = "id";
 
-//             const idFound = await modelUser.findOne({ _id: userRequest })
+            const idFound = await modelUser.findOne({ _id: userRequest })
 
-//             res.json({
-//                 message: "User request is Valid ID",
-//                 userRequest,
-//                 idFound
-//             })
+            res.json({
+                message: "User request is Valid ID",
+                userRequest,
+                idFound
+            })
 
-//         } else {
+        } else {
 
-//             console.log("Valid name", userRequest);     // else it is only alphabets which is name field
+            console.log("Valid name", userRequest);     // else it is only alphabets which is name field
 
-//             const nameFound = await modelUser.findOne({ name: userRequest })
+            const nameFound = await modelUser.findOne({ name: userRequest })
 
-//             res.json({
-//                 message: "User request is Valid name",
-//                 userRequest,
-//                 nameFound
-//             })
-//         }
-//     } catch (error) {
-//         console.log("User request is not identified....", userRequest)
-//         res.json({
-//             message: "User request is not identified",
-//             userRequest
-//         })
-//     }
+            res.json({
+                message: "User request is Valid name",
+                userRequest,
+                nameFound
+            })
+        }
+    } catch (error) {
+        console.log("User request is not identified....", userRequest)
+        res.json({
+            message: "User request is not identified",
+            userRequest
+        })
+    }
 
-// })
+})
 
 //#endregion
 
