@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = 8002;
+const port = 8003;
 
 // #region mongoose connection here
 
@@ -49,7 +49,6 @@ app.get("/users", debug, async (req, res) => {
 })
 
 //#endregion
-
 
 
 //#region add new user with express-validator in to the database
@@ -137,35 +136,117 @@ app.post("/users/add", debug,
 
 //#region get information by email
 
-app.get("/users/:email", debug, body("email").isEmail().normalizeEmail(), async (req, res) => {
+app.get("/users/:userinput", debug, async (req, res) => {
 
-    console.log("IM IN GET USER INFO BY EMAIL", req.body.email)
+    console.log("IM IN GET USER INFO BY userinput", req.params.userinput)
 
+    let searchFlag = "";
+    console.log(searchFlag, "search Flag")
 
-    const emailToFind = req.params.email;
+    const userRequest = req.params.userinput;
 
-    const emailFound = await modelUser.findOne({ email: emailToFind })
+    const emailExpression = /^\S+@\S+\.\S+$/; // this will also work === /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})+)$/;
 
-    console.log("user email found in the collection", emailFound);
+    const idExpression = /^([a-z0-9]+)$/;      //     /\d/ is number mixed in a string
 
-    if (emailFound) {
+    const nameExpression = /^[a-z]+$/;
 
-        console.log("User found ", emailFound)
+    console.log(emailExpression.test(userRequest))
+    console.log(idExpression.test(userRequest))
+    console.log(nameExpression.test(userRequest))
+
+    try {
+
+        if (emailExpression.test(userRequest)) {
+
+            console.log("Valid eMail", userRequest);
+
+            searchFlag = "email";
+
+            res.json({
+                message: "User request is Valid eMail",
+                userRequest, searchFlag
+            })
+
+        } else if (/\d/.test(userRequest)) {
+
+            console.log("Valid ID", userRequest);
+
+            searchFlag = "id";
+
+            res.json({
+                message: "User request is Valid ID",
+                userRequest, searchFlag
+            })
+
+        } else {
+
+            console.log("Valid name", userRequest);
+
+            searchFlag = "name";
+
+            res.json({
+                message: "User request is Valid name",
+                userRequest, searchFlag
+            })
+        }
+    } catch (error) {
+        console.log("User request is not identified....", userRequest)
         res.json({
-            message: "User details as per email ID",
-            emailFound
-        })
-    } else {
-        res.json({
-            message: `Couldn't found requested email ID ${emailToFind} in the list`
+            message: "User request is not identified",
+            userRequest, searchFlag
         })
     }
+
+
+    // if (searchFlag === "email") {
+    //     const emailFound = await modelUser.findOne({ email: emailToFind })
+    //     console.log("User found ", emailFound)
+
+    //     res.json({
+    //         message: "User details as per email ID",
+    //         emailFound
+    //     })
+
+    // } else if (searchFlag === "id") {
+    //     const idFound = await modelUser.findOne({ _id: emailToFind })
+    //     console.log("User found ", idFound)
+
+    //     res.json({
+    //         message: "Valid ID format", emailToFind
+    //     })
+    // } else if (searchFlag === "name") {
+    //     const nameFound = await modelUser.findOne({ name: emailToFind })
+    //     console.log("User found ", emailFound)
+
+    //     res.json({
+    //         message: "Valid name format", nameToFind
+    //     })
+
+    // } else {
+    //     console.log("User request is not identified")
+    // }
+
+    // const emailFound = await modelUser.findOne({ email: emailToFind })
+
+    // console.log("user email found in the collection", emailFound);
+
+    // if (emailFound) {
+
+    //     console.log("User found ", emailFound)
+    //     res.json({
+    //         message: "User details as per email ID",
+    //         emailFound
+    //     })
+    // } else {
+    //     res.json({
+    //         message: `Couldn't found requested email ID ${emailToFind} in the list`
+    //     })
+    // }
 
 })
 
 //#endregion
-
-
 
 //#region get user details by id
 
@@ -246,40 +327,40 @@ app.get("/users/:email", debug, body("email").isEmail().normalizeEmail(), async 
 
 //#region get information based on user id
 
-app.get("/users/:id", debug, async (req, res) => {
+// app.get("/users/:id", debug, async (req, res) => {
 
-    const userToFind = req.params.id;
+//     const userToFind = req.params.id;
 
-    console.log("IM IN GET ID INFO BY NAME", userToFind)
+//     console.log("IM IN GET ID INFO BY NAME", userToFind)
 
-    try {
+//     try {
 
-        const idFound = await modelUser.findById(userToFind)
+//         const idFound = await modelUser.findById(userToFind)
 
-        if (idFound) {
+//         if (idFound) {
 
-            console.log(idFound)
+//             console.log(idFound)
 
-            res.json({
-                message: "id found",
-                idFound
-            })
+//             res.json({
+//                 message: "id found",
+//                 idFound
+//             })
 
-        } else {
+//         } else {
 
-            res.json({
-                message: "Not found"
-            })
-        }
-    } catch (error) {
+//             res.json({
+//                 message: "Not found"
+//             })
+//         }
+//     } catch (error) {
 
-        console.log("Something went wrong while searching data")
+//         console.log("Something went wrong while searching data")
 
-        res.json({
-            message: "Something went wrong while searching data"
-        })
-    }
-})
+//         res.json({
+//             message: "Something went wrong while searching data"
+//         })
+//     }
+// })
 
 //#endregion
 
