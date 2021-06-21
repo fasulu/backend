@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = 8003;
+const port = 8000;
 
 // #region mongoose connection here
 
@@ -54,53 +54,54 @@ app.use("/users", router)
 
 //#region add new user with express-validator in to the database
 
-app.post("/users/add", debug,
+// app.post("/users/add", debug,
 
-    body("name").not().isEmpty().trim().escape().isLength({ min: 4, max: 20 }),
-    body("email").isEmail().normalizeEmail(),
-    body("age").toInt().isLength({ min: 1, max: 2 }),
-    body("city").not().isEmpty().trim().isLength({ min: 3, max: 25 })
+//     body("name").not().isEmpty().trim().escape().isLength({ min: 4, max: 20 }),
+//     body("email").isEmail().normalizeEmail(),
+//     body("age").toInt().isLength({ min: 1, max: 2 }),
+//     body("city").not().isEmpty().trim().isLength({ min: 3, max: 25 })
 
-    , async (req, res, next) => {
+//     , async (req, res, next) => {
 
-        try {
+//         try {
 
-            console.log("IM IN NEW USER POST");
-            const reqBody = req.body;
-            console.log(reqBody);
+//             console.log("IM IN NEW USER POST");
+//             const reqBody = req.body;
+//             console.log(reqBody);
 
-            // verify is there any errors in validation
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.json({
-                    message: "validation error",
-                    errors: errors.array()
-                })
+//             // verify is there any errors in validation
+//             const errors = validationResult(req);
+//             if (!errors.isEmpty()) {
+//                 return res.json({
+//                     message: "validation error",
+//                     errors: errors.array()
+//                 })
 
-            } else {
-                next()
-            }
-        } catch (error) {
-            console("Error while validating the request")
-        }
+//             } else {
+//                 next()
+//             }
+//         } catch (error) {
+//             console("Error while validating the request")
+//         }
 
-    }, async (req, res) => {
+//     }, async (req, res) => {
 
-        try {
+//         try {
 
-            const newuser = req.body
-            const newUser = await userModel.create(newuser)
+//             const newuser = req.body
+//             const newUser = await userModel.create(newuser)
 
-            res.json({
-                message: "New user added"
-            })
+//             res.json({
+//                 message: "New user added"
+//             })
 
-        } catch (error) {
-            console.log("Something went wrong while adding new user", error)
-        }
-    })
+//         } catch (error) {
+//             console.log("Something went wrong while adding new user", error)
+//         }
+//     })
 
 //#endregion
+
 
 //#region get information by username, email or id
 
