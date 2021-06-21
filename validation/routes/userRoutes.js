@@ -1,9 +1,12 @@
 const express = require('express')
 const router = express.Router();
 
-const getUserList = require('../controllers/controllerUser')
+const { getUserList, getUserByID } = require('../controllers/userController')
 
-router.get("/", getUserList)
+
+router.get("/", getUserList);
+
+router.get("/:userinput", getUserByID);
 
 router.all("*", (req, res) => {
     res.status(404).json({
@@ -11,7 +14,5 @@ router.all("*", (req, res) => {
     })
 })
 
-module.exports = getUserList
 
-
-
+module.exports = router;
