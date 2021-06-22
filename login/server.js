@@ -3,8 +3,8 @@ const cors = require("cors")
 const mongoose = require('mongoose');
 const app = express();
 const { body, validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');     // to crypt sensible datas
+const jwt = require('jsonwebtoken');    // to create jsonwebtoken
 
 app.use(cors());
 app.use(express.json());
@@ -25,16 +25,17 @@ mongoose.connect("mongodb://localhost:27017/login", { useNewUrlParser: true }, {
 
 app.get("/users", async (req, res) => {
 
-    console.log("Im in get userlist")
+    console.log("Im in users route")
 
     try {
-
-        const userlist = await userModel.find({})
-
-        res.json(userlist)
+        
+        res.json({
+            message: "You must login to view details"
+        })
 
     } catch (error) {
         console.log("Error while getting user list", error)
+        
         res.json({
             message: "test"
         })
@@ -43,8 +44,7 @@ app.get("/users", async (req, res) => {
 
 //#endregion
 
-
-//#region userModel
+//#region userModel schema
 
 const userSchema = new mongoose.Schema({
     name: { type: String, unique: true },
@@ -54,7 +54,6 @@ const userSchema = new mongoose.Schema({
 const userModel = mongoose.model("User", userSchema);
 
 //#endregion
-
 
 //#region add new user with with post/signup
 
@@ -75,7 +74,7 @@ app.post("/signup",
 
             if (errorVal.isEmpty()) {
 
-                const password = bcrypt.hashSync(userpwd)
+                const password = bcrypt.hashSync(userpwd)       // crypts the given password in to Bearer Token
 
                 const userAdded = await userModel.create({ name: userName, passwd: password })
 
@@ -117,24 +116,31 @@ app.post("/login", async (req, res) => {
 
     try {
 
-        console.log("givenPwd", userPwd)
+        // console.log("givenPwd", userPwd)
 
-        const givenPwd = bcrypt.hashSync(userPwd);
+        const givenPwd = bcrypt.hashSync(userPwd);       // crypts the given password in to Bearer Token
 
-        console.log("givenPwd changed", givenPwd)
+        // console.log("givenPwd changed", givenPwd)
 
         const userDetail = await userModel.findOne({ name: userName })
 
-        console.log("databasePwd", userDetail.name, userDetail.passwd)
+        // console.log("databasePwd", userDetail.name, userDetail.passwd)
 
-        const isValidUser = bcrypt.compareSync(req.body.passwd, userDetail.passwd)
+        const isValidUser = bcrypt.compareSync(req.body.passwd, userDetail.passwd)        // comparer crypted password with the database's crypted value, 
+        // stores true or false in the isValidUser constant.
+        // console.log(isValidUser)
 
-        console.log(isValidUser)
+        if (isValidUser) {          // if it is true
 
-        if (isValidUser) {
+            const validToken = await jwt.sign({     // creates token using jwt with "secret" code and time to expires the token
+                id: userDetail.id
+            }, "secret", {
+                expiresIn: "120s"       // token expires in 120s(2 minutes)
+            })
 
             res.json({
-                message: `${req.body.name} is logged in`
+                message: `${req.body.name} is logged in`,
+                validToken
             })
         } else {
             res.json({
@@ -146,6 +152,59 @@ app.post("/login", async (req, res) => {
 
         res.json({
             message: "Something went wrong",
+        })
+    }
+})
+
+//#endregion
+
+//#region login as public user
+
+app.post("/public", async (req, res) => {
+
+    try {
+
+        const userlist = await userModel.find()
+
+        let nameList = []
+
+        const names = () => {                               // pick only names to show in public access
+            for (let i = 0; i < userlist.length; i++) {
+                console.log(userlist[i].name)
+                nameList.push(userlist[i].name)
+            }
+        }
+
+        names();
+
+        res.json({
+            message: "Loged in as public user with limited access",
+            nameList
+        })
+
+    } catch (error) {
+        console.log("Something went wrong, contact administrator")
+    }
+})
+//#endregion
+
+//#region login as private for token use
+
+app.get("/private", (req, res) => {
+
+    try {
+        
+        const verifyToken = (req.headers.authorization.split(" ")[1])   // split toke type(Bearer) from the token code
+
+        const result = jwt.verify(verifyToken, "secret")                // verify the validity
+
+        res.json(result)
+
+    } catch (error) {
+        console.log("Something went wrong")
+        
+        res.json({
+            message: "Token expired, need to login"
         })
     }
 })
