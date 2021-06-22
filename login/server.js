@@ -68,13 +68,13 @@ app.post("/signup",
 
         const userName = req.body.name
         const userpwd = req.body.passwd
-        
+
         const errorVal = validationResult(req)
-        
+
         try {
-            
+
             if (errorVal.isEmpty()) {
-                
+
                 const password = bcrypt.hashSync(userpwd)
 
                 const userAdded = await userModel.create({ name: userName, passwd: password })
@@ -108,29 +108,46 @@ app.post("/signup",
 
 app.post("/login", async (req, res) => {
 
-    console.log("Im in post login")
+    console.log("Im in post login1")
 
     const userName = req.body.name;
     const userPwd = req.body.passwd;
 
     console.log(userName, userPwd)
+
     try {
-        
+
+        console.log("givenPwd", userPwd)
+
         const givenPwd = bcrypt.hashSync(userPwd);
-    
-        const userDetail = await findOne({ name: userName })
-    
-        const isValidUser = bcrypt.compareSync(givenPwd, userDetail.passwd)
-    
+
+        console.log("givenPwd changed", givenPwd)
+
+        const userDetail = await userModel.findOne({ name: userName })
+
+        console.log("databasePwd", userDetail.name, userDetail.passwd)
+
+        const isValidUser = bcrypt.compareSync(req.body.passwd, userDetail.passwd)
+
         console.log(isValidUser)
 
-    } catch (error) {
-        
-    }
-    res.json({
+        if (isValidUser) {
 
-        message:"Im in post login"
-    })
+            res.json({
+                message: `${req.body.name} is logged in`
+            })
+        } else {
+            res.json({
+                message: `${req.body.name} is not identified user`
+            })
+        }
+
+    } catch (error) {
+
+        res.json({
+            message: "Something went wrong",
+        })
+    }
 })
 
 //#endregion
