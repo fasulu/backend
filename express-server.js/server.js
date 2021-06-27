@@ -47,11 +47,12 @@ app.get("/users", async (req, res) => {
 //#region loginModel schema
 
 const loginSchema = new mongoose.Schema({
-    email: { type: String, unique: true },
-    password: { type: String },
-    firstname: { type: String },
-    surname: { type: String },
-    dateofbirth: { type: Date }
+    email: { type: String, require, unique: true },
+    password: { type: String, require },
+    firstname: { type: String, require },
+    surname: { type: String, require },
+    dateofbirth: { type: String, require },
+    role: { type: String, require }
 })
 
 const loginModel = mongoose.model("Login", loginSchema);
@@ -59,6 +60,7 @@ const loginModel = mongoose.model("Login", loginSchema);
 //#endregion
 
 //#region add new user with with post/signup
+// body("dateofbirth").not().isEmpty().trim().isDate(),
 
 app.post("/signup",
 
@@ -66,7 +68,7 @@ app.post("/signup",
     body("password").not().isEmpty().trim().isLength({ min: 7, max: 25 }),
     body("firstname").not().isEmpty().trim().escape().isLength({ min: 4, max: 20 }),
     body("surname").not().isEmpty().trim().escape().isLength({ min: 4, max: 20 }),
-    body("dateofbirth").not().isEmpty().trim().isDate(),
+    body("role").isIn(["admin", "employee"]),
 
     async (req, res) => {
 
@@ -77,36 +79,60 @@ app.post("/signup",
         const userFName = req.body.firstname
         const userSName = req.body.surname
         const userDOB = req.body.dateofbirth
+        const userRole = req.body.role
 
         const errorVal = validationResult(req)
 
         try {
 
-            if (errorVal.isEmpty()) {
+            const emailExist = await loginModel.findOne({ email: req.body.email }).lean()
+            // console.log("userfound", emailExist)
 
-                const password = bcrypt.hashSync(userpwd)       // crypts the given password in to Bearer Token
+            if (emailExist) {
 
-                const userAdded = await loginModel.create(
-                    {
-                        email: useremail,
-                        password: password,
-                        firstname: userFName,
-                        surname: userSName,
-                        dateofbirth: userDOB
-                    })
                 res.json({
-                    message: "User added",
-                    userAdded
+                    message: "Email already registered, choose different email",
+                    emailExist
                 })
 
             } else {
 
-                console.log("Please verify your user name and password matches the regulation");
+                if (errorVal.isEmpty()) {
 
-                res.json({
-                    message: `Error while processing your ${useremail} as new user`                    
-                })
+                    const password = bcrypt.hashSync(userpwd)       // crypts the given password in to Bearer Token
+
+                    const userAdded = await loginModel.create(
+                        {
+                            email: useremail,
+                            password: password,
+                            firstname: userFName,
+                            surname: userSName,
+                            dateofbirth: userDOB,
+                            role: userRole
+                        })
+                    res.json({
+                        message: "User successfully added",
+                        userAdded
+                    })
+
+                } else {
+
+                    console.log("Please verify your details matches the regulation");
+
+                    res.json({
+                        message: `Error while processing your ${useremail} as new user`,
+                        useremail
+                    })
+                }
             }
+
+        } catch (error) {
+            console.error("Error while checking email already exist?", error)
+        }
+
+
+        try {
+
 
         } catch (error) {
 
@@ -114,6 +140,7 @@ app.post("/signup",
 
             res.json({
                 message: `Error while processing your ${useremail} as new user`,
+                error
             })
         }
     })
@@ -126,6 +153,7 @@ app.post("/login", async (req, res) => {
 
     console.log("Im in post login")
 
+    const tokenExpire = "300s"
     const userEmail = req.body.email;
     const userPwd = req.body.password;
 
@@ -141,7 +169,7 @@ app.post("/login", async (req, res) => {
 
         const userDetail = await loginModel.findOne({ email: userEmail })
 
-        // console.log("databasePwd", userDetail.name, userDetail.password)
+        console.log("UserDetails from database:-", `${userDetail.firstname}, ${userDetail.password}, ${userDetail._id}`)
 
         const isValidUser = bcrypt.compareSync(req.body.password, userDetail.password)        // comparer crypted password with the database's crypted value, 
         // stores true or false in the isValidUser constant.
@@ -152,12 +180,14 @@ app.post("/login", async (req, res) => {
             const validToken = await jwt.sign({     // creates token using jwt with "secret" code and time to expires the token
                 id: userDetail.id
             }, "secret", {
-                expiresIn: "300s"       // token expires in 300s(5 minutes)
+                expiresIn: tokenExpire       // token expires in 300s(5 minutes)
             })
 
             res.json({
-                message: `${userEmail} is logged in`,
-                validToken
+                message: `${userDetail._id}, ${userEmail} is logged in`,
+                userDetail,
+                validToken,
+                tokenExpire
             })
         } else {
             res.json({
@@ -199,7 +229,7 @@ app.post("/public", async (req, res) => {
 
         res.json({
             message: "Loged in as public user with limited access",
-            nameList
+            userlist
         })
 
     } catch (error) {
@@ -234,6 +264,31 @@ app.get("/private", async (req, res) => {
         res.json({
             message: "Token expired, need to login"
         })
+    }
+})
+
+//#endregion
+
+//#region find user by email
+
+app.post("/email/:email", async (req, res) => {
+
+    console.log("im in find user by email address")
+
+    try {
+
+        console.log("user entered email", req.body.email)
+
+        const userfound = await loginModel.findOne({ email: req.body.email }).lean()
+        console.log("userfound", userfound)
+
+        res.json({
+            message: "Loged in as public user with limited access",
+            userfound
+        })
+
+    } catch (error) {
+        console.log("Something went wrong, contact administrator", error)
     }
 })
 
